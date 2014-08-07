@@ -8,35 +8,34 @@
 
 # You should create one R script called run_analysis.R that does the following. 
 
-# 0. First check if the data is available in the 'UCI HAR Dataset' folder (if the folder exists I assume the data is available)
-DATADIR <- 'UCI HAR Dataset'
-if (!file.exists(DATADIR)) {
-	source('scripts/getting_data.R')
+# 0. First check if the data is available (if X_train.txt exists, all are supposed to)
+if (!file.exists('X_train.txt')) {
+	source('getting_data.R')
 }
 
 # 1. Merges the training and the test sets to create one data set.
 
 # read training set
-x_train<-read.table(paste(DATADIR , '/train/X_train.txt', sep=''),header=FALSE)
-y_train<-read.table(paste(DATADIR , '/train/y_train.txt', sep=''),header=FALSE)
+x_train<-read.table('X_train.txt',header=FALSE)
+y_train<-read.table('y_train.txt',header=FALSE)
 
 # read test set
-x_test<-read.table(paste(DATADIR , '/test/X_test.txt', sep=''),header=FALSE)
-y_test<-read.table(paste(DATADIR , '/test/y_test.txt', sep=''),header=FALSE)
+x_test<-read.table('X_test.txt',header=FALSE)
+y_test<-read.table('y_test.txt',header=FALSE)
 
 # union training and test (once for X and once for y)
 x_ds <- rbind(x_train, x_test)
 y_ds <- rbind(y_train, y_test)
 
 # read both subject tables and union them
-subject_train <- read.table(paste(DATADIR , '/train/subject_train.txt', sep=''),header=FALSE)
-subject_test <- read.table(paste(DATADIR , '/test/subject_test.txt', sep=''),header=FALSE)
+subject_train <- read.table('subject_train.txt',header=FALSE)
+subject_test <- read.table('subject_test.txt',header=FALSE)
 subject_ds <- rbind(subject_train, subject_test)
 
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement. 
 
 # read features and assign the feature names to the column names of x_ds (answer to question 4)
-colnames <- read.table(paste(DATADIR , '/features.txt', sep=''))
+colnames <- read.table('features.txt')
 names(x_ds) <- colnames[,2]
 names(subject_ds)[1] = 'subject'	
 
