@@ -4,4 +4,12 @@
 ds.zip
 UCI HAR Dataset
 UCI HAR Dataset\*
-*.txt
+body*.txt
+activity_labels.txt
+README.TXT
+subject_*.txt
+total*.txt
+X_test.txt
+X_train.txt
+y_train.txt
+y_test.txt
