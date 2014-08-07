@@ -1,7 +1,5 @@
 ### Readme.md
 
-Note: the scripts mentioned below: getting_data.r and run_analysis.r, both reside in the Scripts subfolder.
-
 Assignment:
 You should create one R script called run_analysis.R that does the following. 
 
