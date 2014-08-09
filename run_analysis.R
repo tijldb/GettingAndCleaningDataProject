@@ -13,6 +13,13 @@ if (!file.exists('X_train.txt')) {
 	source('getting_data.R')
 }
 
+# 0.5 set B_DEBUG to TRUE if you want to keep all datasets in memory (for debugging afterwards)
+#			     to FALSE for cleaning memory, i.e. removing variables when no longer in use
+# R Studio keeps all variables in memory
+# So I remove the ones no longer needed, this way I hope to clear memory for his operations and to avoid swapping as much as needed
+ 
+B_DEBUG <- FALSE
+
 # 1. Merges the training and the test sets to create one data set.
 
 # read training set
@@ -27,10 +34,18 @@ y_test<-read.table('y_test.txt',header=FALSE)
 x_ds <- rbind(x_train, x_test)
 y_ds <- rbind(y_train, y_test)
 
+if (!B_DEBUG) {
+	remove(x_train,y_train,x_test,y_test)
+}
+
 # read both subject tables and union them
 subject_train <- read.table('subject_train.txt',header=FALSE)
 subject_test <- read.table('subject_test.txt',header=FALSE)
 subject_ds <- rbind(subject_train, subject_test)
+
+if (!B_DEBUG) {
+	remove(subject_train,subject_test)
+}
 
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement. 
 
@@ -43,19 +58,35 @@ names(subject_ds)[1] = 'subject'
 mean_cols <- grep('mean()',colnames$V2,fixed=TRUE)
 std_cols <- grep('std()',colnames$V2,fixed=TRUE)
 
+if (!B_DEBUG) {
+	remove(colnames)
+}
+
 # double checking the columns filter
 names(x_ds)[sort(c(mean_cols,std_cols))]
 
 # project only the relevant columns
 x_mean_std <- x_ds[,sort(c(mean_cols,std_cols))]
 
+if (!B_DEBUG) {
+	remove(x_ds,mean_cols,std_cols)
+}
+
 # merge all three datasets on position
 ds<- cbind(subject_ds,y_ds,x_mean_std)
+
+if (!B_DEBUG) {
+	remove(x_mean_std,subject_ds,y_ds)
+}
 
 # 3. Uses descriptive activity names to name the activities in the data set
 activity_ds <- read.table('UCI HAR Dataset/activity_labels.txt')
 names(activity_ds)[2] = 'activity'
 ds <- merge(activity_ds, ds, sort=FALSE)[2:69]
+
+if (!B_DEBUG) {
+	remove(activity_ds)
+}
 
 # 4. Appropriately labels the data set with descriptive variable names. 
 
@@ -68,7 +99,12 @@ ds <- merge(activity_ds, ds, sort=FALSE)[2:69]
 ds$subject <- as.factor(ds$subject)
 tidy_ds <- aggregate(. ~ activity + subject,ds,mean)
 
+if (!B_DEBUG) {
+	remove(ds)
+}
+
 # write data sets in files
 write.table(tidy_ds,"tidydataset.txt",row.names=FALSE)
-# write.table(ds,"fulldataset.txt",row.names=FALSE) ' Not required
 
+rm(B_DEBUG)
+	
